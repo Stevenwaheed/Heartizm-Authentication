@@ -145,8 +145,6 @@ pandocfilters==1.5.0
 parso==0.8.3
 pathlib==1.0.1
 pathvalidate==2.5.2
-pdfminer==20191125
-pdfminer.six==20221105
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.2.0
