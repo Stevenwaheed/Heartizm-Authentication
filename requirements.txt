@@ -1,6 +1,5 @@
 absl-py==1.2.0
 aiofiles==23.1.0
-altair==4.2.0
 aniso8601==9.0.1
 antiorm==1.2.1
 anyio==3.6.2
@@ -19,7 +18,6 @@ bioread==3.0.0
 biosppy==1.0.0
 bleach==6.0.0
 blinker==1.5
-bokeh==3.1.0
 bs4==0.0.1
 buildozer==1.5.0
 cachetools==5.2.0
