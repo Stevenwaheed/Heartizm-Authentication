@@ -112,7 +112,6 @@ nbformat==5.8.0
 nest-asyncio==1.5.6
 neurokit==0.2.0
 neurokit2==0.2.2
-nibabel==5.0.1
 nipype==1.8.5
 nolds==0.5.2
 notebook==6.5.3
