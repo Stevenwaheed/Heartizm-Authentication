@@ -191,7 +191,6 @@ stack-data==0.6.2
 starlette==0.26.1
 streamlit==1.13.0
 swiglpk==5.0.8
-systole==0.2.4
 tabledata==1.3.1
 tabula==1.0.5
 threadpoolctl==3.1.0
