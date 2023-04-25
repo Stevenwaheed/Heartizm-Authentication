@@ -181,12 +181,10 @@ SimpleSQLite==1.3.0
 sip==6.7.1
 six==1.16.0
 sklearn==0.0
-sleepecg==0.5.3
 smmap==5.0.0
 sniffio==1.3.0
 soundfile==0.11.0
 soupsieve==2.3.2.post1
-spectrum==0.8.1
 SQLAlchemy==1.4.46
 sqliteschema==1.3.0
 stack-data==0.6.2
