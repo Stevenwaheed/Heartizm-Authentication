@@ -194,14 +194,8 @@ swiglpk==5.0.8
 systole==0.2.4
 tabledata==1.3.1
 tabula==1.0.5
-tabula-py==2.7.0
-tabulate==0.9.0
-termcolor==1.1.0
-terminado==0.17.1
-testpath==0.6.0
 threadpoolctl==3.1.0
 toml==0.10.2
-toolz==0.12.0
 tornado==6.2
 tqdm==4.64.1
 traitlets==5.9.0
