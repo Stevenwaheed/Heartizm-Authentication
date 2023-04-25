@@ -110,7 +110,6 @@ nbclient==0.5.13
 nbconvert==6.4.5
 nbformat==5.8.0
 nest-asyncio==1.5.6
-networkx==3.0
 neurokit==0.2.0
 neurokit2==0.2.2
 nibabel==5.0.1
