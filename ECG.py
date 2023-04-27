@@ -957,7 +957,7 @@ def authentication_new_user():
     
     records_list = pd.DataFrame(records).values
     if person.person_name in records_list:
-        return jsonify('Result':'This username already exists...')
+        return jsonify({'Result':'This username already exists...'})
     else:
         other_users_features = person.fetch('*', 'Fake_Person')
         person.insert('Person')
