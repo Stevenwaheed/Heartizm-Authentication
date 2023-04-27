@@ -919,7 +919,7 @@ def get():
     this API function task is to take a person's Name and Phone Number, 
     then get all data about that person from the database.
 '''
-@app.route('/authentication/login', methods=['POST'])
+@app.route('/authentication/login', methods=['POST', 'GET'])
 def authentication_login():
     global login_data
     
@@ -934,7 +934,7 @@ def authentication_login():
     connection.commit()
     connection.close()
 
-    return ' '
+    return jsonify({'Result':'Done'})
 
 
 '''
@@ -954,24 +954,23 @@ def authentication_new_user():
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM Person')
     records = cursor.fetchall()
-    print(records)
     
     records_list = pd.DataFrame(records).values
     if person.person_name in records_list:
-        print('This username already exists...')
+        return jsonify('Result':'This username already exists...')
     else:
         other_users_features = person.fetch('*', 'Fake_Person')
         person.insert('Person')
-        print(person.person_ID, '    ', person.person_name)
+#         print(person.person_ID, '    ', person.person_name)
     
-    return ' '
+        return jsonify({'Person ID':person.person_ID, 'Person Name': person.person_name})
 
 
 '''
     this API function task is to take the ECG data file and extract the main 30 features, 
     then store them with label 1 for training in authentication task.  
 '''
-@app.route('/authentication/store', methods=['POST'])
+@app.route('/authentication/store', methods=['POST', 'GET'])
 def authentication_store():
     global extracted_features
     global other_users_features
@@ -989,7 +988,7 @@ def authentication_store():
     other_users_features = pd.concat([other_users_features, extracted_features])
     print(other_users_features)
     
-    return ' '
+    return jsonify({'Result':'Done'})
 
 
 '''
@@ -1031,7 +1030,7 @@ def authentication_train():
     
     return the {predictions}.
 '''
-@app.route('/authentication/authenticate', methods=['POST'])
+@app.route('/authentication/authenticate', methods=['POST', 'GET'])
 def predict_authenticate():
     global predictions
     # global person
@@ -1054,7 +1053,7 @@ def predict_authenticate():
     predictions = pd.DataFrame(columns=['Results'])
     predictions['Results'] = preds
     
-    return ' '
+    return jsonify({'Result':'Done'})
 
 
 '''
