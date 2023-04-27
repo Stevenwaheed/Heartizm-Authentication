@@ -952,7 +952,7 @@ def authentication_new_user():
     person.insert('Person')
     print(person.person_ID, '    ', person.person_name)
     
-    return ' ' 
+    return ' '
 
 
 '''
