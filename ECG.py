@@ -501,7 +501,7 @@ class sql_ecg():
         if table == 'Person':
             command = self.insert_person_command()
             cursor.execute(command)
-            
+        
         elif table == 'Identification_ECG_Features' or table == 'Authentication_ECG_Features':
             command = self.insert_features_command(table)
             # print(data.to_numpy())
@@ -949,9 +949,20 @@ def authentication_new_user():
     ID = secrets.token_urlsafe(32)
     json_data = json.loads(request.data)
     person = sql_ecg(ID, json_data['User Name'], json_data['Email'], json_data['Phone Number'])
-    other_users_features = person.fetch('*', 'Fake_Person')
-    person.insert('Person')
-    print(person.person_ID, '    ', person.person_name)
+    
+    connection = sqlite3.Connection('Heartizm.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Person')
+    records = cursor.fetchall()
+    print(records)
+    
+    records_list = pd.DataFrame(records).values
+    if person.person_name in records_list:
+        print('This username already exists...')
+    else:
+        other_users_features = person.fetch('*', 'Fake_Person')
+        person.insert('Person')
+        print(person.person_ID, '    ', person.person_name)
     
     return ' '
 
