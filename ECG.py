@@ -18,6 +18,7 @@ from sklearn.model_selection import train_test_split
 
 # Database packages
 import sqlite3
+import _sqlite3
 
 # others
 import joblib
@@ -1058,5 +1059,4 @@ def authenticate_result():
         return jsonify({'Result':'Authenticated'})
 
 
-# if __name__ == '__main__':
 app.run(host='0.0.0.0')
