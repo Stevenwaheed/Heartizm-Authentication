@@ -918,7 +918,7 @@ def get():
     this API function task is to take a person's Name and Phone Number, 
     then get all data about that person from the database.
 '''
-@app.route('/authentication/login', methods=['POST'])
+@app.route('/authentication/login', methods=['POST', 'GET'])
 def authentication_login():
     global login_data
     
@@ -933,14 +933,14 @@ def authentication_login():
     connection.commit()
     connection.close()
 
-    return ' '
+    return jsonify({'result': 'Done'})
 
 
 '''
     this API function task is to take a person's Name, Email and Phone Number,
     and insert his/her data in Person table in the database.
 '''
-@app.route('/authentication/new_user', methods=['POST'])
+@app.route('/authentication/new_user', methods=['POST', 'GET'])
 def authentication_new_user():
     global other_users_features
     global person
@@ -952,14 +952,14 @@ def authentication_new_user():
     person.insert('Person')
     print(person.person_ID, '    ', person.person_name)
     
-    return ' '
+    return jsonify({'person_ID': person.person_ID, 'person_name': person.person_name})
 
 
 '''
     this API function task is to take the ECG data file and extract the main 30 features, 
     then store them with label 1 for training in authentication task.  
 '''
-@app.route('/authentication/store', methods=['POST'])
+@app.route('/authentication/store', methods=['POST', 'GET'])
 def authentication_store():
     global extracted_features
     global other_users_features
@@ -977,7 +977,7 @@ def authentication_store():
     other_users_features = pd.concat([other_users_features, extracted_features])
     print(other_users_features)
     
-    return ' '
+    return jsonify({'result': 'Done'})
 
 
 '''
@@ -1019,7 +1019,7 @@ def authentication_train():
     
     return the {predictions}.
 '''
-@app.route('/authentication/authenticate', methods=['POST'])
+@app.route('/authentication/authenticate', methods=['POST', 'GET'])
 def predict_authenticate():
     global predictions
     # global person
@@ -1042,7 +1042,7 @@ def predict_authenticate():
     predictions = pd.DataFrame(columns=['Results'])
     predictions['Results'] = preds
     
-    return ' '
+    return {'result': 'Done'}
 
 
 '''
