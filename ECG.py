@@ -922,19 +922,25 @@ def get():
 @app.route('/authentication/login', methods=['POST', 'GET'])
 def authentication_login():
     global login_data
-    
-    json_data = json.loads(request.data)
-    
-    connection = sqlite3.connect('Heartizm.db')
-    cursor = connection.cursor()
-         
-    cursor.execute('SELECT * FROM Person WHERE Name="'+ json_data['User Name'] +'" AND phone_number="'+ json_data['Phone Number'] +'"')
-    login_data = cursor.fetchall()
 
+    json_data = json.loads(request.data.decode('utf-8'))
+
+    connection = sqlite3.connect('Heartizm.db')
+    # print(json_data)
+    cursor = connection.cursor()
+    
+    cursor.execute('SELECT * FROM Person WHERE Name="'+ json_data['UserName'] +'" AND phone_number="'+ json_data['PhoneNumber'] +'"')
+    login_data = cursor.fetchall()
+    
     connection.commit()
     connection.close()
-
-    return jsonify({'Result':'Done'})
+    
+    if len(login_data)>0:
+        return jsonify({'Result':'Done'})
+    else:
+        return jsonify({'Result':'Not Exist'})
+    
+    
 
 
 '''
@@ -945,24 +951,26 @@ def authentication_login():
 def authentication_new_user():
     global other_users_features
     global person
-    
+
     ID = secrets.token_urlsafe(32)
-    json_data = json.loads(request.data)
-    person = sql_ecg(ID, json_data['User Name'], json_data['Email'], json_data['Phone Number'])
+    json_data = json.loads(request.data.decode('utf-8'))
     
+    person = sql_ecg(ID, json_data['UserName'], json_data['Email'], json_data['PhoneNumber'])
+
     connection = sqlite3.Connection('Heartizm.db')
     cursor = connection.cursor()
+
     cursor.execute('SELECT * FROM Person')
     records = cursor.fetchall()
     
     records_list = pd.DataFrame(records).values
     if person.person_name in records_list:
-        return jsonify({'Result':'This username already exists...'})
+        return jsonify({'UserName':'Null', 'Email':'Null', 'PhoneNumber':'Null'})
     else:
         other_users_features = person.fetch('*', 'Fake_Person')
         person.insert('Person')
-    
-        return jsonify({'Person ID':person.person_ID, 'Person Name': person.person_name})
+        
+        return jsonify({'UserName':json_data['UserName'], 'Email':json_data['Email'], 'PhoneNumber':json_data['PhoneNumber']})
 
 
 '''
@@ -976,7 +984,7 @@ def authentication_store():
     global person
     
     print(person.person_ID, '    ', person.person_name)
-    json_data = json.loads(request.data)
+    json_data = json.loads(request.data.decode('utf-8'))
     ecg_df = convert_json_dict(json_data)
     ecg_heart = ECG(ecg_df)
     extracted_features = ecg_heart.authentication_labled_feature_exctraction()
@@ -1029,7 +1037,7 @@ def authentication_train():
     
     return the {predictions}.
 '''
-@app.route('/authentication/authenticate_perdict', methods=['POST', 'GET'])
+@app.route('/authentication/authenticate', methods=['POST', 'GET'])
 def predict_authenticate():
     global predictions
     # global person
@@ -1040,7 +1048,7 @@ def predict_authenticate():
     
     ExtraTree_model = joblib.load(login_data[0][-1])
     
-    json_data = json.loads(request.data)
+    json_data = json.loads(request.data.decode('utf-8'))
     ecg_df = convert_json_dict(json_data)
     ecg_heart = ECG(ecg_df)
     extracted_features = ecg_heart.feature_exctraction()
@@ -1052,20 +1060,23 @@ def predict_authenticate():
     predictions = pd.DataFrame(columns=['Results'])
     predictions['Results'] = preds
     
-    return jsonify({'Result':'Done'})
-
-
-'''
-    this API function task is to take the predictions and determine if the user is authenticated or not.
-'''
-@app.route('/authentication/authenticate_results', methods=['GET'])
-def authenticate_result():
-    global predictions
-    
     if predictions.value_counts().index[0][0] == 0:
         return jsonify({'Result':'Not Authenticated'})
     else:
         return jsonify({'Result':'Authenticated'})
+
+
+# '''
+#     this API function task is to take the predictions and determine if the user is authenticated or not.
+# '''
+# @app.route('/authentication/authenticate_results', methods=['GET'])
+# def authenticate_result():
+#     global predictions
+    
+#     if predictions.value_counts().index[0][0] == 0:
+#         return jsonify({'Result':'Not Authenticated'})
+#     else:
+#         return jsonify({'Result':'Authenticated'})
 
 
 app.run(host='0.0.0.0')
