@@ -1030,7 +1030,7 @@ def authentication_train():
     
     return the {predictions}.
 '''
-@app.route('/authentication/authenticate', methods=['POST', 'GET'])
+@app.route('/authentication/authenticate_perdict', methods=['POST', 'GET'])
 def predict_authenticate():
     global predictions
     # global person
@@ -1059,7 +1059,7 @@ def predict_authenticate():
 '''
     this API function task is to take the predictions and determine if the user is authenticated or not.
 '''
-@app.route('/authentication/authenticate', methods=['GET'])
+@app.route('/authentication/authenticate_results', methods=['GET'])
 def authenticate_result():
     global predictions
     
