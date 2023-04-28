@@ -1,5 +1,3 @@
-
-
 # API packages
 from flask import Flask, jsonify, request, make_response
 from flask_restful import Api
@@ -1002,6 +1000,7 @@ def authentication_train():
     global other_users_features
     global person
     
+    print(person.person_ID, '    ', person.person_name)
     df = other_users_features.dropna()
     print(other_users_features)
     
@@ -1036,6 +1035,7 @@ def predict_authenticate():
     # global person
     global login_data
     
+    # fetched_data = person.fetch('*', 'Person')
     print(login_data[0][-1])
     
     ExtraTree_model = joblib.load(login_data[0][-1])
@@ -1061,7 +1061,6 @@ def predict_authenticate():
 @app.route('/authentication/authenticate_results', methods=['GET'])
 def authenticate_result():
     global predictions
-    print(predictions)
     
     if predictions.value_counts().index[0][0] == 0:
         return jsonify({'Result':'Not Authenticated'})
