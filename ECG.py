@@ -1,3 +1,5 @@
+
+
 # API packages
 from flask import Flask, jsonify, request, make_response
 from flask_restful import Api
@@ -1062,6 +1064,7 @@ def predict_authenticate():
 @app.route('/authentication/authenticate_results', methods=['GET'])
 def authenticate_result():
     global predictions
+    print(predictions)
     
     if predictions.value_counts().index[0][0] == 0:
         return jsonify({'Result':'Not Authenticated'})
