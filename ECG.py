@@ -18,7 +18,6 @@ from sklearn.model_selection import train_test_split
 
 # Database packages
 import sqlite3
-import _sqlite3
 
 # others
 import joblib
@@ -501,7 +500,7 @@ class sql_ecg():
         if table == 'Person':
             command = self.insert_person_command()
             cursor.execute(command)
-        
+            
         elif table == 'Identification_ECG_Features' or table == 'Authentication_ECG_Features':
             command = self.insert_features_command(table)
             # print(data.to_numpy())
@@ -919,72 +918,55 @@ def get():
     this API function task is to take a person's Name and Phone Number, 
     then get all data about that person from the database.
 '''
-@app.route('/authentication/login', methods=['POST', 'GET'])
+@app.route('/authentication/login', methods=['POST'])
 def authentication_login():
     global login_data
-
-    json_data = json.loads(request.data.decode('utf-8'))
-
+    
+    json_data = json.loads(request.data)
+    
     connection = sqlite3.connect('Heartizm.db')
-    # print(json_data)
     cursor = connection.cursor()
-    
-    cursor.execute('SELECT * FROM Person WHERE Name="'+ json_data['UserName'] +'" AND phone_number="'+ json_data['PhoneNumber'] +'"')
+         
+    cursor.execute('SELECT * FROM Person WHERE Name="'+ json_data['User Name'] +'" AND phone_number="'+ json_data['Phone Number'] +'"')
     login_data = cursor.fetchall()
-    
+
     connection.commit()
     connection.close()
-    
-    if len(login_data)>0:
-        return jsonify({'Result':'Done'})
-    else:
-        return jsonify({'Result':'Not Exist'})
-    
-    
+
+    return ' '
 
 
 '''
     this API function task is to take a person's Name, Email and Phone Number,
     and insert his/her data in Person table in the database.
 '''
-@app.route('/authentication/new_user', methods=['POST', 'GET'])
+@app.route('/authentication/new_user', methods=['POST'])
 def authentication_new_user():
     global other_users_features
     global person
-
+    
     ID = secrets.token_urlsafe(32)
-    json_data = json.loads(request.data.decode('utf-8'))
+    json_data = json.loads(request.data)
+    person = sql_ecg(ID, json_data['User Name'], json_data['Email'], json_data['Phone Number'])
+    other_users_features = person.fetch('*', 'Fake_Person')
+    person.insert('Person')
+    print(person.person_ID, '    ', person.person_name)
     
-    person = sql_ecg(ID, json_data['UserName'], json_data['Email'], json_data['PhoneNumber'])
-
-    connection = sqlite3.Connection('Heartizm.db')
-    cursor = connection.cursor()
-
-    cursor.execute('SELECT * FROM Person')
-    records = cursor.fetchall()
-    
-    records_list = pd.DataFrame(records).values
-    if person.person_name in records_list:
-        return jsonify({'UserName':'Null', 'Email':'Null', 'PhoneNumber':'Null'})
-    else:
-        other_users_features = person.fetch('*', 'Fake_Person')
-        person.insert('Person')
-        
-        return jsonify({'UserName':json_data['UserName'], 'Email':json_data['Email'], 'PhoneNumber':json_data['PhoneNumber']})
+    return ' '
 
 
 '''
     this API function task is to take the ECG data file and extract the main 30 features, 
     then store them with label 1 for training in authentication task.  
 '''
-@app.route('/authentication/store', methods=['POST', 'GET'])
+@app.route('/authentication/store', methods=['POST'])
 def authentication_store():
     global extracted_features
     global other_users_features
     global person
     
     print(person.person_ID, '    ', person.person_name)
-    json_data = json.loads(request.data.decode('utf-8'))
+    json_data = json.loads(request.data)
     ecg_df = convert_json_dict(json_data)
     ecg_heart = ECG(ecg_df)
     extracted_features = ecg_heart.authentication_labled_feature_exctraction()
@@ -995,7 +977,7 @@ def authentication_store():
     other_users_features = pd.concat([other_users_features, extracted_features])
     print(other_users_features)
     
-    return jsonify({'Result':'Done'})
+    return ' '
 
 
 '''
@@ -1037,7 +1019,7 @@ def authentication_train():
     
     return the {predictions}.
 '''
-@app.route('/authentication/authenticate', methods=['POST', 'GET'])
+@app.route('/authentication/authenticate', methods=['POST'])
 def predict_authenticate():
     global predictions
     # global person
@@ -1048,7 +1030,7 @@ def predict_authenticate():
     
     ExtraTree_model = joblib.load(login_data[0][-1])
     
-    json_data = json.loads(request.data.decode('utf-8'))
+    json_data = json.loads(request.data)
     ecg_df = convert_json_dict(json_data)
     ecg_heart = ECG(ecg_df)
     extracted_features = ecg_heart.feature_exctraction()
@@ -1060,23 +1042,21 @@ def predict_authenticate():
     predictions = pd.DataFrame(columns=['Results'])
     predictions['Results'] = preds
     
+    return ' '
+
+
+'''
+    this API function task is to take the predictions and determine if the user is authenticated or not.
+'''
+@app.route('/authentication/authenticate', methods=['GET'])
+def authenticate_result():
+    global predictions
+    
     if predictions.value_counts().index[0][0] == 0:
         return jsonify({'Result':'Not Authenticated'})
     else:
         return jsonify({'Result':'Authenticated'})
 
 
-# '''
-#     this API function task is to take the predictions and determine if the user is authenticated or not.
-# '''
-# @app.route('/authentication/authenticate_results', methods=['GET'])
-# def authenticate_result():
-#     global predictions
-    
-#     if predictions.value_counts().index[0][0] == 0:
-#         return jsonify({'Result':'Not Authenticated'})
-#     else:
-#         return jsonify({'Result':'Authenticated'})
-
-
-app.run(host='0.0.0.0')
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
