@@ -12,6 +12,7 @@ Here're some of the project's best features:
 *   Use the best filters to remove the noise from your ECG signal
 *   Use Machine Learning to predict your heart signal
 *   Use your heart signal like your fingerprint to lock your system
+*   Use a local database to store ecg signals for each person
 
 <h2>🛠️ Installation Steps:</h2>
 
